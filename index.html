@@ -1,0 +1,249 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Earth & Space Adventure Park</title>
+<style>
+body {
+  margin: 0;
+  font-family: "Trebuchet MS", Arial, sans-serif;
+  background: linear-gradient(#bce9ff, #f7fbff, #e8ddff);
+  color: #24476d;
+  text-align: center;
+}
+header {
+  background: linear-gradient(135deg, #91d9ff, #d7caff);
+  padding: 25px 12px;
+  border-radius: 0 0 30px 30px;
+}
+h1 { color: #214e85; }
+main { max-width: 950px; margin: auto; padding: 20px; }
+.zones {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+}
+button {
+  cursor: pointer;
+  border: none;
+  border-radius: 18px;
+  padding: 14px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #24476d;
+  background: white;
+  box-shadow: 0 4px 10px #6688aa33;
+}
+.zone { min-height: 125px; }
+.zone span { display: block; font-size: 35px; margin-bottom: 8px; }
+.zone.active { outline: 3px solid #7569d9; }
+#game {
+  background: white;
+  border-radius: 25px;
+  padding: 24px;
+  margin-top: 25px;
+  box-shadow: 0 6px 18px #6688aa33;
+}
+#question { font-size: 22px; }
+.answers {
+  display: grid;
+  gap: 10px;
+  max-width: 550px;
+  margin: 20px auto;
+}
+.answer { border: 2px solid #d5e3f0; }
+.answer:hover { background: #e9f5ff; }
+.correct { background: #d6f6dc !important; }
+.wrong { background: #ffe0e0 !important; }
+#feedback {
+  margin: 15px auto;
+  max-width: 600px;
+  line-height: 1.6;
+}
+.next { background: #8170df; color: white; }
+#stars { font-size: 20px; font-weight: bold; }
+footer { padding: 25px; }
+</style>
+</head>
+<body>
+
+<header>
+  <div style="font-size:45px">🌎 ☁️ ✨ 🚀 ⭐</div>
+  <h1>Our Beautiful Earth & Space</h1>
+  <h2>🎡 ADVENTURE PARK! 🎡</h2>
+  <p>Explore • Learn • Play • Shine!</p>
+  <div id="stars">⭐ Stars: 0/5</div>
+</header>
+
+<main>
+  <h2>🎈 Choose Your Adventure!</h2>
+  <div class="zones" id="zones"></div>
+  <section id="game">
+    <h2>🌈 Welcome, Young Scientist!</h2>
+    <p>Choose a game zone above to begin your adventure!</p>
+  </section>
+</main>
+
+<footer>💖 Be curious, be kind, and keep exploring! 💖</footer>
+
+<script>
+const games = [
+{
+ emoji:"🌎", name:"Hug Our Home!",
+ subtitle:"Earth's Layers", color:"#ddf5ff",
+ questions:[
+  ["Which is Earth's outermost layer?",["Inner Core","Crust","Mantle"],1,"The crust is Earth's thin, solid outer layer."],
+  ["Which layer lies beneath the crust?",["Mantle","Inner Core","Atmosphere"],0,"The mantle is a thick layer of hot rock."],
+  ["What is at the very center of Earth?",["Crust","Outer Core","Inner Core"],2,"The inner core is mostly solid iron and nickel."],
+  ["Which layer contains liquid metal?",["Outer Core","Crust","Inner Core"],0,"The outer core contains mostly liquid iron and nickel."]
+ ]
+},
+{
+ emoji:"🪨", name:"Little Rock's Trip!",
+ subtitle:"The Rock Cycle", color:"#fce8d5",
+ questions:[
+  ["What forms when lava cools?",["Igneous rock","Sedimentary rock","Soil"],0,"Igneous rock forms when magma or lava cools."],
+  ["Heat and pressure can form which rock?",["Sand","Metamorphic rock","Water"],1,"Heat and pressure can change existing rocks into metamorphic rocks."],
+  ["How do sedimentary rocks commonly form?",["From compacted sediments","From clouds","From sunlight"],0,"Sediments can become rock through compaction and cementation."],
+  ["What is molten rock underground called?",["Lava","Magma","Sand"],1,"Molten rock underground is called magma."]
+ ]
+},
+{
+ emoji:"🚀", name:"Rocket's Star Trek!",
+ subtitle:"The Solar System", color:"#e9e2ff",
+ questions:[
+  ["Which planet is closest to the Sun?",["Earth","Mercury","Mars"],1,"Mercury is closest to the Sun."],
+  ["Which planet is famous for its rings?",["Saturn","Venus","Mercury"],0,"Saturn has a spectacular ring system."],
+  ["Which planet is our home?",["Jupiter","Earth","Neptune"],1,"Earth is the third planet from the Sun."],
+  ["What is the largest planet?",["Mars","Saturn","Jupiter"],2,"Jupiter is the largest planet in our solar system."]
+ ]
+},
+{
+ emoji:"🌋", name:"Land Shapes Party!",
+ subtitle:"Plate Boundaries", color:"#ffe5e5",
+ questions:[
+  ["What happens when two plates push together?",["They converge","They disappear","They stop forever"],0,"Converging plates can form mountains and trenches."],
+  ["What happens at a divergent boundary?",["Plates move apart","Plates move together","Plates stop"],0,"Divergent plates move away from each other."],
+  ["What happens at a transform boundary?",["Plates slide past","Plates melt instantly","Plates vanish"],0,"Transform plates slide horizontally past each other."],
+  ["What is it called when one plate sinks beneath another?",["Subduction","Evaporation","Condensation"],0,"Subduction can cause earthquakes and volcanic activity."]
+ ]
+},
+{
+ emoji:"⭐", name:"Sunshine & Treasures!",
+ subtitle:"Earth's Resources", color:"#fff3c7",
+ questions:[
+  ["Which is a renewable energy source?",["Coal","Sunlight","Petroleum"],1,"Sunlight can be used to generate solar energy."],
+  ["Which resource do humans need to drink?",["Clean water","Crude oil","Coal"],0,"Clean water is essential for life."],
+  ["How can we conserve water?",["Leave taps running","Fix leaking taps","Waste water"],1,"Fixing leaks prevents unnecessary water waste."],
+  ["Where is the air we breathe found?",["Atmosphere","Metal ores","Deep rocks"],0,"Earth's atmosphere contains oxygen needed by humans and many other organisms."]
+ ]
+}
+];
+
+let currentGame = 0;
+let questionIndex = 0;
+let selected = false;
+let stars = new Set();
+
+function drawZones() {
+  document.getElementById("zones").innerHTML = games.map((g,i) => `
+    <button class="zone ${i===currentGame?'active':''}"
+      style="background:${g.color}"
+      onclick="startGame(${i})">
+      <span>${g.emoji}</span>${g.name}<br>
+      <small>${g.subtitle}</small>
+      ${stars.has(i) ? "<p>🏅 Completed!</p>" : ""}
+    </button>
+  `).join("");
+}
+
+function startGame(i) {
+  currentGame = i;
+  questionIndex = 0;
+  selected = false;
+  drawZones();
+  showQuestion();
+}
+
+function showQuestion() {
+  const g = games[currentGame];
+  const panel = document.getElementById("game");
+
+  if (questionIndex >= g.questions.length) {
+    panel.innerHTML = `
+      <div style="font-size:60px">🎉🏆🌟</div>
+      <h2>Amazing! You did it!</h2>
+      <p>You completed ${g.name}</p>
+      <p>You are a science superstar! 🚀</p>
+      <button class="next" onclick="collectStar()">⭐ Collect Your Star</button>
+      <button onclick="startGame(currentGame)">🔄 Play Again</button>
+      <button onclick="startGame((currentGame+1)%games.length)">➡️ Next Zone</button>
+    `;
+    return;
+  }
+
+  const q = g.questions[questionIndex];
+
+  panel.innerHTML = `
+    <h2>${g.emoji} ${g.name}</h2>
+    <p>${g.subtitle}</p>
+    <p>Question ${questionIndex+1} of ${g.questions.length}</p>
+    <div style="background:#e8edf5;border-radius:20px;height:10px">
+      <div style="background:#78cf99;width:${questionIndex/g.questions.length*100}%;height:10px;border-radius:20px"></div>
+    </div>
+    <h3 id="question">${q[0]}</h3>
+    <div class="answers">
+      ${q[1].map((a,i)=>`
+        <button class="answer" id="answer${i}"
+          onclick="checkAnswer(${i})">${["A","B","C"][i]}. ${a}</button>
+      `).join("")}
+    </div>
+    <div id="feedback"></div>
+  `;
+}
+
+function checkAnswer(choice) {
+  if (selected) return;
+  selected = true;
+  const q = games[currentGame].questions[questionIndex];
+  const correct = q[2];
+
+  document.getElementById("answer"+correct).classList.add("correct");
+  if (choice !== correct) {
+    document.getElementById("answer"+choice).classList.add("wrong");
+  }
+
+  document.querySelectorAll(".answer").forEach(b => b.disabled = true);
+
+  document.getElementById("feedback").innerHTML = `
+    <h3>${choice===correct
+      ? "🎉 AMAZING! Correct answer!"
+      : "💛 Good try! Keep learning!"}</h3>
+    <p>${q[3]}</p>
+    <button class="next" onclick="nextQuestion()">
+      ${questionIndex===games[currentGame].questions.length-1
+        ? "🏁 Finish Adventure" : "➡️ Next Question"}
+    </button>
+  `;
+}
+
+function nextQuestion() {
+  questionIndex++;
+  selected = false;
+  showQuestion();
+}
+
+function collectStar() {
+  stars.add(currentGame);
+  document.getElementById("stars").textContent =
+    `⭐ Stars: ${stars.size}/5`;
+  drawZones();
+  showQuestion();
+}
+
+drawZones();
+</script>
+</body>
+</html>
